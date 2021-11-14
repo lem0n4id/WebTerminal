@@ -1,7 +1,7 @@
 
 class counterService{
     constructor(){
-            this.commandCounter = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];// Keeps track of different commands(i.e., if they are completed or not)
+            this.commandCounter = [0,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0,1,1];// Keeps track of different commands(i.e., if they are completed or not)
             // 0 -> not completed
             // 1 -> completed 
             // added 1 more position
@@ -24,7 +24,9 @@ class counterService{
             'date',//13
             'ifconfig',//14
             'tty',//15
-            'history'//16
+            'history',//16
+            'about',//17
+            'contribute'//18
             ];
             //all the newly added commands must be updated in both the above arrays
             // --------------------------------------------------------------------
