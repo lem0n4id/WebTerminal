@@ -3,9 +3,10 @@ import { fs_commands } from './files'
 import CounterService from './counter.service'
 import FileSystem from '../lib/fs'
 
-const commands = context => {
+// `fs` can be injected so the caller (e.g. the terminal's tab completion)
+// shares the same filesystem instance as the commands
+const commands = (context, fs = new FileSystem()) => {
   const counter = new CounterService()
-  const fs = new FileSystem()
   const b = basic(context, counter, fs)
   const f = fs_commands(context, counter, fs)
   return { ...b, ...f }
