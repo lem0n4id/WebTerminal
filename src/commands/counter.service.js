@@ -1,3 +1,5 @@
+import { loadProgress, saveProgress, clearProgress } from '../lib/storage'
+
 class CounterService {
   constructor() {
     this._commands = {
@@ -19,6 +21,12 @@ class CounterService {
       tty: false,
       history: false,
     }
+    const saved = loadProgress()
+    for (const name of Object.keys(saved)) {
+      if (Object.prototype.hasOwnProperty.call(this._commands, name)) {
+        this._commands[name] = Boolean(saved[name])
+      }
+    }
   }
 
   // Returns colored jquery.terminal markup
@@ -33,7 +41,15 @@ class CounterService {
   setDone(name) {
     if (name in this._commands) {
       this._commands[name] = true
+      saveProgress(this._commands)
     }
+  }
+
+  resetProgress() {
+    for (const name of Object.keys(this._commands)) {
+      this._commands[name] = false
+    }
+    clearProgress()
   }
 
   allCommands() {

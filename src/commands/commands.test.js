@@ -5,6 +5,7 @@ describe('CounterService', () => {
   let counter
 
   beforeEach(() => {
+    window.localStorage.clear()
     counter = new CounterService()
   })
 
@@ -47,5 +48,52 @@ describe('CounterService', () => {
     expect(cmds).toContain('cp')
     expect(cmds).toContain('rm')
     expect(cmds).toContain('history')
+  })
+
+  it('progress persists across instances', () => {
+    counter.setDone('echo')
+    counter.setDone('pwd')
+    const fresh = new CounterService()
+    expect(fresh.getStatus('echo')).toContain('Completed')
+    expect(fresh.getStatus('pwd')).toContain('Completed')
+    expect(fresh.completedCount()).toBe(2)
+  })
+
+  it('corrupt JSON in localStorage is ignored', () => {
+    window.localStorage.setItem('webterminal:progress:v1', '{not valid json!!')
+    let fresh
+    expect(() => {
+      fresh = new CounterService()
+    }).not.toThrow()
+    expect(fresh.completedCount()).toBe(0)
+  })
+
+  it('non-object JSON in localStorage is ignored', () => {
+    window.localStorage.setItem('webterminal:progress:v1', '"just a string"')
+    const fresh = new CounterService()
+    expect(fresh.completedCount()).toBe(0)
+  })
+
+  it('unknown command keys in storage are ignored', () => {
+    window.localStorage.setItem(
+      'webterminal:progress:v1',
+      JSON.stringify({ echo: true, bogus: true, 'rm -rf /': true, toString: true })
+    )
+    const fresh = new CounterService()
+    expect(fresh.getStatus('echo')).toContain('Completed')
+    expect(fresh.allCommands()).not.toContain('bogus')
+    expect(fresh.allCommands()).not.toContain('rm -rf /')
+    expect(fresh.allCommands()).not.toContain('toString')
+    expect(fresh.completedCount()).toBe(1)
+  })
+
+  it('resetProgress marks everything undone and clears storage', () => {
+    counter.setDone('echo')
+    counter.setDone('ls')
+    counter.resetProgress()
+    expect(counter.completedCount()).toBe(0)
+    expect(window.localStorage.getItem('webterminal:progress:v1')).toBeNull()
+    const fresh = new CounterService()
+    expect(fresh.completedCount()).toBe(0)
   })
 })

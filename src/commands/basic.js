@@ -72,6 +72,11 @@ let basic = (context, counter, fs) => {
       context.echo('> [[b;#ff3300;]tty] prints the filename of the terminal connected to standard input.\n')
     },
 
+    reset: () => {
+      counter.resetProgress()
+      context.echo('Progress reset. Type [[b;#ff3300;]help] to see the task list.\n')
+    },
+
     about: () => {
       context.echo('> The shell is basically a program that takes your commands from the keyboard')
       context.echo('> and sends them to the operating system to perform.\n')
