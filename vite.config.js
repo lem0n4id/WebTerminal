@@ -7,6 +7,6 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    exclude: ['node_modules/**', '.claude/**'],
+    exclude: ['node_modules/**', '.claude/**', 'e2e/**'],
   },
 })

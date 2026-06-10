@@ -25,3 +25,8 @@ yarn-error.log*
 
 # Claude Code worktrees (temporary agent workspaces)
 .claude/worktrees/
+
+# playwright
+/test-results
+/playwright-report
+/blob-report
