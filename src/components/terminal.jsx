@@ -63,5 +63,5 @@ export default function Terminal() {
     }
   }, [])
 
-  return <div className="terminal" ref={containerRef} />
+  return <div className="terminal-container" ref={containerRef} />
 }

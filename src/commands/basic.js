@@ -76,7 +76,7 @@ let basic = (context, counter, fs) => {
 
     reset: () => {
       counter.resetProgress()
-      context.echo('Progress reset. Type [[b;#ff3300;]help] to see the task list.\n')
+      context.echo(`Progress reset. Type ${red('help')} to see the task list.\n`)
     },
 
     about: () => {

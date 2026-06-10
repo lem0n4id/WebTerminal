@@ -22,9 +22,9 @@ function waitForOutput(page, text) {
 
 test.beforeEach(async ({ page }) => {
   await page.goto('./')
-  await expect(page.locator('.terminal')).toBeVisible()
+  await expect(page.locator('.xterm')).toBeVisible()
   await page.waitForFunction(() => Array.isArray(window.__terminalText))
-  await page.locator('.terminal').click()
+  await page.locator('.xterm').click()
 })
 
 test('terminal boots and shows the greeting', async ({ page }) => {

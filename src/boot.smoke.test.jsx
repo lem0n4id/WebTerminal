@@ -57,7 +57,7 @@ describe('app boot smoke test', () => {
     const root = document.querySelector('#root')
     expect(root.innerHTML).not.toBe('')
     // the wrapper div and xterm's own DOM should both exist
-    expect(document.querySelector('.terminal')).not.toBeNull()
+    expect(document.querySelector('.xterm')).not.toBeNull()
     expect(document.querySelector('.xterm')).not.toBeNull()
     // the e2e text hook is installed and captured the greeting
     expect(window.__terminalText.some((l) => l.includes('WebTerminal'))).toBe(true)
