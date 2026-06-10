@@ -1,50 +1,22 @@
-## Open For Contributions (KWOC Participants Only)
-
-<!--
-*** Thanks for checking out this README Template. If you have a suggestion that would
-*** make this better, please fork the repo and create a pull request or simply open
-*** an issue with the tag "enhancement".
-*** Thanks again! Now go create something AMAZING! :D
-***
-***
-***
-*** To avoid retyping too much info. Do a search and replace for the following:
-*** github_username, repo, twitter_handle, email
--->
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/imabp/WebTerminal">
+  <a href="https://github.com/lem0n4id/WebTerminal">
     <img src="./public/logo.svg" alt="Logo"> &nbsp; &nbsp; <img src="./public/favicon.svg" alt="Logo">
   </a>
 
   <p align="center">
-    This will be your guide to learning the basic commands used in the shell of Linux <b>on your BROSWER</b> .
+    This will be your guide to learning the basic commands used in the shell of Linux <b>on your BROWSER</b>.
     <br />
     <a href="https://www.linux.com/what-is-linux/"><strong>Learn more about Linux »</strong></a>
     <br />
     <br />
-    <a href="https://imabp.github.io/WebTerminal/">View Demo</a>
+    <a href="https://lem0n4id.github.io/WebTerminal/">View Demo</a>
     ·
-    <a href="https://github.com/imabp/WebTerminal/issues">Report Bug</a>
+    <a href="https://github.com/lem0n4id/WebTerminal/issues">Report Bug</a>
     ·
-    <a href="https://github.com/imabp/WebTerminal/issues">Request Feature</a>
+    <a href="https://github.com/lem0n4id/WebTerminal/issues">Request Feature</a>
   </p>
-</p>
-
-<!-- KWOC Banner -->
-<p align="center">
-<img src="./public/banner.svg"/>
 </p>
 
 
@@ -64,7 +36,7 @@
 - [Contact](#maintainer)
 
 <!-- Project Breakdown -->
-## Project Breakdown 
+## Project Breakdown
 
 <p align="center">
 <img src="./public/breakdown.png"/>
@@ -75,17 +47,13 @@
 ## About The Project
 
 Web Terminal helps you to learn the basic linux commands on your browser itself.
-You can  use it live here: <a href="https://imabp.github.io/WebTerminal">Web Terminal</a>
-
-<!-- Here's a blank template to get started:
-**To avoid retyping too much info. Do a search and replace with your text editor for the following:**
-`github_username`, `repo`, `twitter_handle`, `email` -->
+You can use it live here: <a href="https://lem0n4id.github.io/WebTerminal/">Web Terminal</a>
 
 ### Built With
 
 - [React](https://reactjs.org/)
-- [Node](https://nodejs.org/en/)
-- [Jquery](https://jquery.com/)
+- [Vite](https://vitejs.dev/)
+- [jQuery Terminal](https://terminal.jcubic.pl/)
 
 <!-- GETTING STARTED -->
 
@@ -94,8 +62,6 @@ You can  use it live here: <a href="https://imabp.github.io/WebTerminal">Web Ter
 To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
 
 - npm
 
@@ -108,7 +74,7 @@ npm install npm@latest -g
 1. Clone the repo
 
 ```sh
-git clone https://github.com/github_username/repo.git
+git clone https://github.com/lem0n4id/WebTerminal.git
 ```
 
 2. Install NPM packages
@@ -123,30 +89,36 @@ npm install
 
 The primary goal of this project is to help you learn basic Linux commands in your browser itself.
 
-_For more examples, please refer to the [Working Demo](https://imabp.github.io/WebTerminal/)_
+_For more examples, please refer to the [Working Demo](https://lem0n4id.github.io/WebTerminal/)_
 
 <!-- ROADMAP -->
 
 ## Roadmap
 
-See the [open issues](https://github.com/imabp/WebTerminal/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/lem0n4id/WebTerminal/issues) for a list of proposed features (and known issues).
 
 <!-- CONTRIBUTING -->
 
 ## Contribute
-> Only open for KWOC participants. Those who want to participate at KWOC, you can participate [here](http://kwoc.kossiitkgp.org/).
 
-Join the communication channel for this project on 
-[Gitter](https://gitter.im/imabp/WebTerminal?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
+Contributions are welcome! To contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add your feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a Pull Request against `master`
+
+Please open an [issue](https://github.com/lem0n4id/WebTerminal/issues) first to discuss significant changes.
 
 ## Maintainer
+
 Important decisions regarding the project are taken by the following maintainer.
 
-| Abir        |
-| :-------------: |
-| <img  height="100" width="100" src="https://avatars3.githubusercontent.com/u/53480076?s=460&u=c1aad58f1a773750a47475682afa80ac3b74f583&v=4">      |
-| [@imabp](https://github.com/imabp)      |
+| lem0n4id |
+| :------: |
+| [@lem0n4id](https://github.com/lem0n4id) |
 
 
 ## Deployment
-<a href="https://imabp.github.io/WebTerminal"><img src="https://img.shields.io/badge/-GitHub%20Pages-black?style=for-the-badge&logo=github"/></a>
+<a href="https://lem0n4id.github.io/WebTerminal"><img src="https://img.shields.io/badge/-GitHub%20Pages-black?style=for-the-badge&logo=github"/></a>
