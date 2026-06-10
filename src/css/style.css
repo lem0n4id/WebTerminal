@@ -17,6 +17,42 @@ body,
   height: 100vh;
 }
 
+/* Mobile helper-key bar and command suggestion chips */
+.key-bar,
+.command-chips {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #111;
+  overflow-x: auto;
+  touch-action: manipulation;
+}
+
+.key-bar button,
+.command-chips button {
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid #333;
+  background: #222;
+  color: #fff;
+  font-family: Menlo, Monaco, 'Courier New', monospace;
+  font-size: 16px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.key-bar button {
+  border-radius: 6px;
+}
+
+.command-chips button {
+  border-radius: 22px;
+  padding: 0 16px;
+}
+
 h1 {
 	font-size: 70px;
 	font-style: normal;
