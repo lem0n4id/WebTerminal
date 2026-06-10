@@ -62,13 +62,19 @@ export default class Shell {
     this.showPrompt()
   }
 
+  // Raw input entry point. Besides clean per-key events this also receives
+  // multi-char chunks: pastes, and Android IME composition output (GBoard
+  // commits words/sequences in one onData call). Escape sequences are matched
+  // on the whole chunk; everything else is normalized and walked code point by
+  // code point through the single-char logic, so embedded \r executes and
+  // embedded \x7f deletes.
   handleData(data) {
     if (data === '\x1b[A') return this._historyUp()
     if (data === '\x1b[B') return this._historyDown()
     if (data.startsWith('\x1b')) return // ignore other escape sequences
-    for (const ch of data) {
-      if (ch === '\r') this._enter()
-      else if (ch === '\n') continue // part of pasted \r\n
+    const chunk = data.replace(/\r\n/g, '\r') // CRLF paste must execute once
+    for (const ch of chunk) {
+      if (ch === '\r' || ch === '\n') this._enter()
       else if (ch === '\x7f' || ch === '\b') this._backspace()
       else if (ch === '\t') this._tab()
       else if (ch === '\x03') this._interrupt()
