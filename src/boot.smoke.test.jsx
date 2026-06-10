@@ -38,6 +38,14 @@ function stubBrowserApis() {
     window.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 0)
     window.cancelAnimationFrame = (id) => clearTimeout(id)
   }
+  if (!window.visualViewport) {
+    window.visualViewport = {
+      height: 768,
+      offsetTop: 0,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }
+  }
 }
 
 describe('app boot smoke test', () => {

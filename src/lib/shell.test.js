@@ -146,6 +146,58 @@ describe('Shell', () => {
     })
   })
 
+  describe('multi-char chunks (paste / Android IME)', () => {
+    it('lands a printable chunk in the buffer without executing', () => {
+      type(shell, 'echo hi')
+      expect(shell.buffer).toBe('echo hi')
+      expect(shell.history()).toEqual([])
+    })
+
+    it('executes on an embedded \\r and keeps the remainder in the buffer', () => {
+      const echo = vi.fn()
+      shell.setCommands({ echo })
+      type(shell, 'echo one\recho t')
+      expect(echo).toHaveBeenCalledWith('one')
+      expect(shell.buffer).toBe('echo t')
+    })
+
+    it('normalizes a CRLF chunk to a single execution', () => {
+      const echo = vi.fn()
+      shell.setCommands({ echo })
+      type(shell, 'echo one\r\n')
+      expect(echo).toHaveBeenCalledTimes(1)
+      expect(shell.history()).toEqual(['echo one'])
+      expect(shell.buffer).toBe('')
+    })
+
+    it('executes an LF-only paste once', () => {
+      const pwd = vi.fn()
+      shell.setCommands({ pwd })
+      type(shell, 'pwd\n')
+      expect(pwd).toHaveBeenCalledTimes(1)
+      expect(shell.history()).toEqual(['pwd'])
+    })
+
+    it('applies a trailing \\x7f in a chunk as a delete', () => {
+      type(shell, 'pwdd\x7f')
+      expect(shell.buffer).toBe('pwd')
+    })
+
+    it('handles code points outside the BMP without splitting surrogates', () => {
+      type(shell, 'echo 🚀')
+      expect(shell.buffer).toBe('echo 🚀')
+    })
+
+    it('still recognizes escape sequences after a chunk', () => {
+      shell.setCommands({ echo: () => {} })
+      type(shell, 'echo one\r')
+      type(shell, '\x1b[A')
+      expect(shell.buffer).toBe('echo one')
+      type(shell, '\x1b[B')
+      expect(shell.buffer).toBe('')
+    })
+  })
+
   describe('observer hooks', () => {
     it('onPrint receives ANSI-stripped text', () => {
       const seen = []
