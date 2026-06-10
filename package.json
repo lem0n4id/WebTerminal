@@ -12,9 +12,8 @@
     "lint": "eslint src --ext .js,.jsx"
   },
   "dependencies": {
-    "jquery": "^3.7.1",
-    "jquery.terminal": "^2.42.1",
-    "lodash": "^4.17.21",
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/xterm": "^6.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

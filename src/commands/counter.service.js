@@ -1,3 +1,4 @@
+import { green, red } from '../lib/ansi'
 import { loadProgress, saveProgress, clearProgress } from '../lib/storage'
 
 class CounterService {
@@ -29,13 +30,13 @@ class CounterService {
     }
   }
 
-  // Returns colored jquery.terminal markup
+  // Returns ANSI-colored status text
   getStatus(name) {
     const done = this._commands[name]
     if (done === undefined) return ''
     return done
-      ? '[[b;#44D544;]✓ Completed]'
-      : '[[b;#ff3300;]○ Not completed]'
+      ? green('✓ Completed')
+      : red('○ Not completed')
   }
 
   setDone(name) {
