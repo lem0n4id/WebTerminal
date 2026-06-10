@@ -6,6 +6,7 @@ import $ from 'jquery'
 import initTerminal from 'jquery.terminal'
 import 'jquery.terminal/css/jquery.terminal.css'
 import commands from '../commands'
+import { getCompletions } from '../lib/completion'
 
 initTerminal(window, $)
 const intro={
@@ -29,7 +30,19 @@ export default class Terminal extends React.Component{
 
     componentDidMount(){
         this.$el = $(this.el)
-        this.terminal = this.$el.terminal(commands(this.$el),intro)
+        const interpreter = commands(this.$el)
+        const fs = interpreter.__fs // shared FileSystem (see src/commands/index.js)
+        delete interpreter.__fs // keep the interpreter a pure command map
+        const names = Object.keys(interpreter)
+        this.terminal = this.$el.terminal(interpreter, {
+            ...intro,
+            // Tab completion: jquery.terminal passes the current token, but the
+            // pure logic works off the line so far, so fetch it from the terminal
+            completion: function(string, callback) {
+                const line = this.before_cursor(false)
+                callback(getCompletions(line, { commands: names, fs }))
+            },
+        })
     }
 
     componentWillUnmount(){
