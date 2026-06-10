@@ -84,9 +84,10 @@ class FileSystem {
   touch(name, content = '') {
     if (!name) return { ok: false, message: 'touch: missing operand' }
     const cur = this._currentNode()
-    if (!cur.children[name]) {
-      cur.children[name] = this._makeFile(name, content)
+    if (cur.children[name]) {
+      return { ok: true, message: `'${name}' already exists` }
     }
+    cur.children[name] = this._makeFile(name, content)
     return { ok: true, message: `'${name}' created` }
   }
 
@@ -112,6 +113,7 @@ class FileSystem {
     if (!name) return { ok: false, message: 'rm: missing operand' }
     const cur = this._currentNode()
     if (!cur.children[name]) return { ok: false, message: `rm: cannot remove '${name}': No such file or directory` }
+    if (cur.children[name].type === 'dir') return { ok: false, message: `rm: cannot remove '${name}': Is a directory (use rmdir)` }
     delete cur.children[name]
     return { ok: true, message: `'${name}' removed` }
   }
