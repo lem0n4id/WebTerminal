@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { Terminal as XTerm } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import '@xterm/xterm/css/xterm.css'
 import commands from '../commands'
 import FileSystem from '../lib/fs'
 import Shell from '../lib/shell'
+import { useVisualViewport } from '../lib/useVisualViewport'
 import { green, red, white } from '../lib/ansi'
 
 const PROMPT = green('user@localhost:~$') + ' '
@@ -19,6 +20,9 @@ const GREETING =
 
 export default function Terminal() {
   const containerRef = useRef(null)
+  const appShellRef = useRef(null)
+  const termRef = useRef(null)
+  const fitAddonRef = useRef(null)
 
   useEffect(() => {
     const term = new XTerm({
@@ -32,6 +36,8 @@ export default function Terminal() {
     term.loadAddon(fitAddon)
     term.open(containerRef.current)
     fitAddon.fit()
+    termRef.current = term
+    fitAddonRef.current = fitAddon
 
     // window.__terminalText exists solely as a plain-text output hook for the
     // Playwright e2e tests (xterm renders to canvas/DOM that is hard to read)
@@ -60,8 +66,33 @@ export default function Terminal() {
       window.removeEventListener('resize', onResize)
       dataListener.dispose()
       term.dispose()
+      termRef.current = null
+      fitAddonRef.current = null
     }
   }, [])
 
-  return <div className="terminal-container" ref={containerRef} />
+  // Refit xterm and keep the prompt in view whenever the visual viewport
+  // changes (soft keyboard opening/closing, URL bar collapse, pinch-zoom pan)
+  const onViewportChange = useCallback(() => {
+    if (fitAddonRef.current) fitAddonRef.current.fit()
+    if (termRef.current) termRef.current.scrollToBottom()
+  }, [])
+  useVisualViewport(appShellRef, onViewportChange)
+
+  // iOS only opens the soft keyboard from a genuine user gesture; focusing
+  // from any tap on the shell widens the target beyond xterm's own screen
+  const focusTerminal = () => {
+    if (termRef.current) termRef.current.focus()
+  }
+
+  return (
+    <div
+      className="app-shell"
+      data-testid="app-shell"
+      ref={appShellRef}
+      onClick={focusTerminal}
+    >
+      <div className="terminal-container" ref={containerRef} />
+    </div>
+  )
 }
