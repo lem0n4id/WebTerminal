@@ -57,6 +57,12 @@ class CounterService {
     return Object.keys(this._commands)
   }
 
+  // Not-yet-completed commands that are directly typeable as a single word
+  // (excludes multi-word pseudo-entries like 'cd ..')
+  pendingCommands() {
+    return Object.keys(this._commands).filter((name) => !this._commands[name] && !name.includes(' '))
+  }
+
   completedCount() {
     return Object.values(this._commands).filter(Boolean).length
   }
