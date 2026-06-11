@@ -14,16 +14,50 @@ export function tokenize(line) {
   return tokens
 }
 
+// Wraps text at word boundaries so no rendered line exceeds `width` visible
+// columns. ANSI escape codes are kept intact and count as zero width. Lines
+// already short enough pass through untouched (preserving any alignment
+// padding); words longer than a full line are hard-broken.
+export function wrapToWidth(text, width) {
+  return text
+    .split('\n')
+    .map((line) => {
+      if (stripAnsi(line).length <= width) return line
+      const lines = []
+      let current = ''
+      for (const word of line.split(' ')) {
+        const joined = current ? current + ' ' + word : word
+        if (current && stripAnsi(joined).length > width) {
+          lines.push(current)
+          current = word
+        } else {
+          current = joined
+        }
+        // hard-break oversized words (only safe without embedded ANSI codes)
+        while (stripAnsi(current).length > width && !current.includes('\x1b')) {
+          lines.push(current.slice(0, width))
+          current = current.slice(width)
+        }
+      }
+      if (current) lines.push(current)
+      return lines.join('\n')
+    })
+    .join('\n')
+}
+
 // Terminal-agnostic line discipline: owns the prompt, input buffer, history
 // navigation, Tab completion and command dispatch. Feed it raw input via
 // handleData(data) (e.g. from xterm's onData) and it writes everything it
 // wants displayed through the injected `write` sink.
 export default class Shell {
-  constructor({ write, commands = {}, fs = null, prompt = '$ ' } = {}) {
+  constructor({ write, commands = {}, fs = null, prompt = '$ ', cols = null } = {}) {
     this._sink = write
     this.commands = commands
     this.fs = fs
     this.prompt = prompt
+    // optional provider of the terminal's current column count; when present,
+    // print() word-wraps output instead of letting the terminal break mid-word
+    this._cols = cols
     this.buffer = ''
     this._history = []
     this._historyIndex = null
@@ -47,10 +81,17 @@ export default class Shell {
     this._sink(String(text).replace(/\r?\n/g, '\r\n'))
   }
 
-  // echo-style output: writes text plus a trailing newline
+  // echo-style output: writes text plus a trailing newline, word-wrapped to
+  // the terminal width when a cols provider is available (terminals hard-wrap
+  // mid-word otherwise, which reads badly on narrow phone screens)
   print(text = '') {
     const s = String(text)
-    this.write(s + '\n')
+    const width = typeof this._cols === 'function' ? this._cols() : 0
+    // widths below 10 are treated as bogus (uninitialized terminal) — no wrap
+    const out = width >= 10 ? wrapToWidth(s, width) : s
+    this.write(out + '\n')
+    // observers get the original unwrapped text so substring assertions in
+    // the e2e suite are independent of the device's column count
     if (this.onPrint) this.onPrint(stripAnsi(s))
   }
 

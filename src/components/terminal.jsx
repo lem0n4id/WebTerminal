@@ -37,6 +37,8 @@ export default function Terminal() {
   const fitAddonRef = useRef(null)
   // forwards key-bar/chip presses into the shell once the effect creates it
   const sendRef = useRef(null)
+  // delayed second fit after keyboard show/hide animations settle
+  const settleTimerRef = useRef(null)
   const [counter] = useState(() => new CounterService())
   const [touchUi] = useState(isTouchUi)
   // bumped after every executed command so the chips re-read progress
@@ -62,7 +64,12 @@ export default function Terminal() {
     window.__terminalText = []
 
     const fs = new FileSystem()
-    const shell = new Shell({ write: (s) => term.write(s), fs, prompt: PROMPT })
+    const shell = new Shell({
+      write: (s) => term.write(s),
+      fs,
+      prompt: PROMPT,
+      cols: () => term.cols,
+    })
     const context = {
       echo: (text) => shell.print(text),
       clear: () => term.clear(),
@@ -86,6 +93,7 @@ export default function Terminal() {
 
     return () => {
       sendRef.current = null
+      clearTimeout(settleTimerRef.current)
       window.removeEventListener('resize', onResize)
       dataListener.dispose()
       term.dispose()
@@ -95,10 +103,18 @@ export default function Terminal() {
   }, [counter])
 
   // Refit xterm and keep the prompt in view whenever the visual viewport
-  // changes (soft keyboard opening/closing, URL bar collapse, pinch-zoom pan)
+  // changes (soft keyboard opening/closing, URL bar collapse, pinch-zoom pan).
+  // The second, delayed fit runs after the keyboard animation settles —
+  // fitting mid-animation leaves the canvas sized for a transient viewport,
+  // which shows up as a stale strip along the terminal's right edge.
   const onViewportChange = useCallback(() => {
-    if (fitAddonRef.current) fitAddonRef.current.fit()
-    if (termRef.current) termRef.current.scrollToBottom()
+    const fit = () => {
+      if (fitAddonRef.current) fitAddonRef.current.fit()
+      if (termRef.current) termRef.current.scrollToBottom()
+    }
+    fit()
+    clearTimeout(settleTimerRef.current)
+    settleTimerRef.current = setTimeout(fit, 300)
   }, [])
   useVisualViewport(appShellRef, onViewportChange)
 
