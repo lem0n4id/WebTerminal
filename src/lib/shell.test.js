@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import Shell, { tokenize } from './shell'
+import Shell, { tokenize, wrapToWidth } from './shell'
 import { stripAnsi } from './ansi'
 
 const type = (shell, text) => shell.handleData(text)
@@ -214,5 +214,65 @@ describe('Shell', () => {
       run(shell, 'nope')
       expect(seen).toEqual(['echo hi', 'nope'])
     })
+  })
+})
+
+describe('wrapToWidth', () => {
+  it('leaves short lines untouched, including alignment padding', () => {
+    expect(wrapToWidth('ls           done', 40)).toBe('ls           done')
+  })
+
+  it('wraps long lines at word boundaries', () => {
+    const wrapped = wrapToWidth('the quick brown fox jumps over the lazy dog', 15)
+    for (const line of wrapped.split('\n')) {
+      expect(line.length).toBeLessThanOrEqual(15)
+    }
+    expect(wrapped).toBe('the quick brown\nfox jumps over\nthe lazy dog')
+  })
+
+  it('does not count ANSI escape codes toward the width', () => {
+    const colored = '\x1b[1;32mgreen\x1b[0m word here and more words to wrap'
+    const wrapped = wrapToWidth(colored, 20)
+    for (const line of wrapped.split('\n')) {
+      expect(stripAnsi(line).length).toBeLessThanOrEqual(20)
+    }
+    // the escape codes survive intact
+    expect(wrapped).toContain('\x1b[1;32m')
+  })
+
+  it('hard-breaks words longer than the width', () => {
+    const wrapped = wrapToWidth('aaaaaaaaaaaaaaaaaaaaaaaaa', 10)
+    expect(wrapped.split('\n')).toEqual(['aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaa'])
+  })
+
+  it('preserves existing newlines', () => {
+    expect(wrapToWidth('one\ntwo', 40)).toBe('one\ntwo')
+  })
+})
+
+describe('print wrapping', () => {
+  it('wraps output to the cols provider width', () => {
+    const out = []
+    const shell = new Shell({ write: (s) => out.push(s), cols: () => 15 })
+    shell.print('the quick brown fox jumps over the lazy dog')
+    const written = out.join('')
+    for (const line of stripAnsi(written).split('\r\n')) {
+      expect(line.length).toBeLessThanOrEqual(15)
+    }
+  })
+
+  it('onPrint still receives the original unwrapped text', () => {
+    const seen = []
+    const shell = new Shell({ write: () => {}, cols: () => 15 })
+    shell.onPrint = (s) => seen.push(s)
+    shell.print('the quick brown fox jumps over the lazy dog')
+    expect(seen).toEqual(['the quick brown fox jumps over the lazy dog'])
+  })
+
+  it('does not wrap without a cols provider', () => {
+    const out = []
+    const shell = new Shell({ write: (s) => out.push(s) })
+    shell.print('the quick brown fox jumps over the lazy dog')
+    expect(out.join('')).toBe('the quick brown fox jumps over the lazy dog\r\n')
   })
 })
